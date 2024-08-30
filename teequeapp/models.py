@@ -35,3 +35,37 @@ class CustomUser(AbstractUser):
         blank=True,
         related_name='customuser_permissions'  # Unique related_name
     )
+
+
+
+class Seller(models.Model):
+    '''Seller Class'''
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='seller')
+    skills = models.TextField(blank=True, null=True)
+    portfolio = models.TextField(blank=True, null=True)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
+    number_of_reviews = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.user.username}'
+
+    def save(self, *args, **kwargs):
+        # Add the user to the Seller group
+        seller_group, created = Group.objects.get_or_create(name='Seller')
+        self.user.groups.add(seller_group)
+        super().save(*args, **kwargs)
+
+
+class Buyer(models.Model):
+    '''Buyer Class'''
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='buyer')
+    favorite_services = models.ManyToManyField('Service', related_name='favorited_by')
+
+    def __str__(self):
+        return f'{self.user.username}'
+
+    def save(self, *args, **kwargs):
+        # Add the user to the Seller group
+        buyer_group, created = Group.objects.get_or_create(name='Buyer')
+        self.user.groups.add(buyer_group)
+        super().save(*args, **kwargs)
