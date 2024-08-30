@@ -5,6 +5,16 @@ name = "pypi"
 
 [packages]
 django = "*"
+django-countries = "*"
+django-debug-toolbar = "*"
+django-phonenumber-field = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
+djangorestframework-simplejwt = "*"
+djoser = "*"
+drf-nested-routers = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

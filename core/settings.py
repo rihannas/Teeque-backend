@@ -37,6 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
+    'teequeapp',
+    'teequeapi',
+    'rest_framework',
+    'djoser',
+    'phonenumber_field',
+    'django_countries',
+    'django_filters',
+
 ]
 
 MIDDLEWARE = [
