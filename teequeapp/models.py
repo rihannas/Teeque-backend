@@ -69,3 +69,27 @@ class Buyer(models.Model):
         buyer_group, created = Group.objects.get_or_create(name='Buyer')
         self.user.groups.add(buyer_group)
         super().save(*args, **kwargs)
+
+
+class Category(models.Model):
+    '''Category Models'''
+    name = models.CharField(max_length=225)
+
+    def __str__(self):
+        return self.name
+
+
+
+class Service(models.Model):
+    '''Services Model'''
+    title = models.CharField(max_length=225, blank=False)
+    category_id = models.ForeignKey(Category, on_delete=models.PROTECT, blank=False)
+    description = models.TextField(blank=False)
+    price = models.DecimalField(decimal_places=2, max_digits=6, validators=[MinValueValidator(Decimal(0.00))], blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    tags = models.ManyToManyField('Tag', related_name='services', blank=True)
+
+    def __str__(self):
+        return self.title
