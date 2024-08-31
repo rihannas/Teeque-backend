@@ -89,7 +89,7 @@ class Service(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    # tags = models.ManyToManyField('Tag', related_name='services', blank=True)
+    tags = models.ManyToManyField('Tag', related_name='services', blank=True)
 
     def __str__(self):
         return self.title
@@ -122,3 +122,9 @@ class OrderItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.service}"
+    
+class Tag(models.Model):
+    tag = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.tag
