@@ -128,3 +128,14 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.tag
+
+class Rating(models.Model):
+    service_id = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='reviews')
+    buyer_id = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Rating for {self.service.title} by {self.buyer.username}"
+
