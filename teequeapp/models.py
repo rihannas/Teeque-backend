@@ -89,7 +89,36 @@ class Service(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    tags = models.ManyToManyField('Tag', related_name='services', blank=True)
+    # tags = models.ManyToManyField('Tag', related_name='services', blank=True)
 
     def __str__(self):
         return self.title
+
+class Order(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    buyer_id = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+
+    #TODO: 
+    # Change the on_delete situation to be PROTECTED if an order is active.
+    def __str__(self):
+        return f"Order #{self.id}"
+
+class OrderItem(models.Model):
+    ORDER_STATUS_PENDING = 'P'
+    ORDER_STATUS_COMPLETE = 'C'
+    ORDER_STATUS_DELIEVERED = 'D'
+    ORDER_STATUS_REVISION = 'R'
+    ORDER_STATUS_CHOICES = [
+        (ORDER_STATUS_PENDING, 'Pending'),
+        (ORDER_STATUS_COMPLETE, 'Completed'),
+        (ORDER_STATUS_DELIEVERED, 'Delievered'),
+        (ORDER_STATUS_REVISION, 'Revision')
+    ]
+
+    order_id = models.ForeignKey(Order, on_delete=models.PROTECT)
+    service_id = models.ForeignKey(Service, on_delete=models.PROTECT, related_name='orderitems')
+    order_status = models.CharField(
+        max_length=1, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS_PENDING)
+
+    def __str__(self) -> str:
+        return f"{self.service}"
