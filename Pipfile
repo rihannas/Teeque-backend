@@ -15,6 +15,7 @@ djangorestframework-simplejwt = "*"
 djoser = "*"
 drf-nested-routers = "*"
 python-dotenv = "*"
+django-phonenumbers = "*"
 
 [dev-packages]
 

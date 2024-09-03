@@ -12,6 +12,11 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
+class SellerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seller
+        fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     taxedPrice = serializers.SerializerMethodField(method_name='price_w_tax')

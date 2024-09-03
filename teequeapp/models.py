@@ -98,6 +98,7 @@ class Buyer(models.Model):
         self.user.groups.add(buyer_group)
         super().save(*args, **kwargs)
 
+    
 
 class Category(models.Model):
     '''Category Models'''
