@@ -1,12 +1,32 @@
 from django.contrib import admin
-from .models import *
-# Register your models here.
+from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
+from .models import Seller, Buyer, Service, Category, Tag, Rating, CustomUser
+
+class CustomUserAdmin(UserAdmin):
+    model = CustomUser
+    list_display = ['email', 'username', 'is_staff', 'is_active', 'last_login']
+    list_filter = ('is_staff', 'is_active', 'country')
+    fieldsets = (
+        (None, {'fields': ('email', 'username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'about', 'phonenumber', 'country', 'birth_date')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('date_joined',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_active', 'groups', 'user_permissions')}
+        ),
+    )
+    readonly_fields = ('last_login', 'date_joined')
+    search_fields = ('email', 'username', 'first_name', 'last_name')
+    ordering = ('email',)
+
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Seller)
 admin.site.register(Buyer)
 admin.site.register(Service)
 admin.site.register(Category)
 admin.site.register(Tag)
 admin.site.register(Rating)
-admin.site.register(CustomUser)
-
-
