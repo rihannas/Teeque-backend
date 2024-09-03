@@ -12,7 +12,13 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['name']
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
 class SellerSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Seller
         fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
