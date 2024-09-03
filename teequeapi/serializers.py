@@ -10,7 +10,7 @@ class TagSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['name']
 
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,8 +20,10 @@ class SellerSerializer(serializers.ModelSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     taxedPrice = serializers.SerializerMethodField(method_name='price_w_tax')
-    category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all())
+    category_id = CategorySerializer(read_only=True)
+    seller_id = SellerSerializer(read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+
     def price_w_tax(self, service: Service):
         return (service.price * Decimal(0.15)) + service.price
 
