@@ -134,3 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'teequeapp.CustomUser'
 
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
