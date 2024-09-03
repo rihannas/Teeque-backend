@@ -112,20 +112,20 @@ class Category(models.Model):
 class Service(models.Model):
     '''Services Model'''
     title = models.CharField(max_length=225, blank=False)
-    category_id = models.ForeignKey(Category, on_delete=models.PROTECT, blank=False)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, blank=False)
     description = models.TextField(blank=False)
     price = models.DecimalField(decimal_places=2, max_digits=6, validators=[MinValueValidator(Decimal(0.00))], blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag', related_name='services', blank=True)
 
-    def __str__(self):
-        return self.title
+    def __str__(self) -> str:
+        return f"{self.service_id}"
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    buyer_id = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
 
     #TODO: 
     # Change the on_delete situation to be PROTECTED if an order is active.
@@ -144,8 +144,8 @@ class OrderItem(models.Model):
         (ORDER_STATUS_REVISION, 'Revision')
     ]
 
-    order_id = models.ForeignKey(Order, on_delete=models.PROTECT)
-    service_id = models.ForeignKey(Service, on_delete=models.PROTECT, related_name='orderitems')
+    order = models.ForeignKey(Order, on_delete=models.PROTECT)
+    service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name='orderitems')
     order_status = models.CharField(
         max_length=1, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS_PENDING)
 
@@ -159,8 +159,8 @@ class Tag(models.Model):
         return self.tag
 
 class Rating(models.Model):
-    service_id = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='reviews')
-    buyer_id = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='reviews')
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField(blank=True)
     created_at = models.DateField(auto_now_add=True)
