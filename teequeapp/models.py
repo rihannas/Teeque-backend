@@ -120,9 +120,6 @@ class Service(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag', related_name='services', blank=True)
 
-    def __str__(self) -> str:
-        return f"{self.service_id}"
-
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
