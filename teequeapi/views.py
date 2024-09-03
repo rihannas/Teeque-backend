@@ -10,3 +10,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
     """
     queryset = Service.objects.select_related('category_id', 'seller_id').prefetch_related('tags').all()
     serializer_class = ServiceSerializer
+
+class SellerViewSet(viewsets.ModelViewSet):
+    queryset = Seller.objects.all()
+    serializer_class = SellerSerializer
