@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import Seller, Buyer, Service, Category, Tag, Rating, CustomUser
+from .models import *
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -30,3 +30,5 @@ admin.site.register(Service)
 admin.site.register(Category)
 admin.site.register(Tag)
 admin.site.register(Rating)
+admin.site.register(Order)
+admin.site.register(OrderItem)
