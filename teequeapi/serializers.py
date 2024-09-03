@@ -20,8 +20,13 @@ class SellerSerializer(serializers.ModelSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     taxedPrice = serializers.SerializerMethodField(method_name='price_w_tax')
-    category_id = CategorySerializer(read_only=True)
-    seller_id = SellerSerializer(read_only=True)
+    category_id = serializers.StringRelatedField()
+    seller_id = serializers.HyperlinkedRelatedField(
+        many=False,
+        read_only=True,
+        view_name='sellers-detail',
+        lookup_field='id'
+    )
     tags = TagSerializer(many=True, read_only=True)
 
     def price_w_tax(self, service: Service):
