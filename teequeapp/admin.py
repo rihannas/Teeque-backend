@@ -23,6 +23,13 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('email',)
 
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'order', 'get_service_title', 'order_status')
+
+    def get_service_title(self, obj):
+        return obj.service.title
+    get_service_title.short_description = 'Service'
+
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Seller)
 admin.site.register(Buyer)
@@ -31,4 +38,4 @@ admin.site.register(Category)
 admin.site.register(Tag)
 admin.site.register(Rating)
 admin.site.register(Order)
-admin.site.register(OrderItem)
+admin.site.register(OrderItem, OrderItemAdmin)
