@@ -16,7 +16,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing accounts.
     """
-    queryset = Service.objects.select_related('category_id', 'seller_id').prefetch_related('tags').all()
+    queryset = Service.objects.select_related('category', 'seller').prefetch_related('tags').all()
     serializer_class = ServiceSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ServiceFilter
