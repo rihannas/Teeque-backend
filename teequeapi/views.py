@@ -12,5 +12,6 @@ class ServiceViewSet(viewsets.ModelViewSet):
     serializer_class = ServiceSerializer
 
 class SellerViewSet(viewsets.ModelViewSet):
-    queryset = Seller.objects.all()
+    queryset = Seller.objects.select_related('user').all()
     serializer_class = SellerSerializer
+    lookup_field = 'id'
