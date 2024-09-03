@@ -31,7 +31,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         many=False,
         read_only=True,
         view_name='sellers-detail',
-        lookup_field='id'
+        lookup_field='pk'
     )
     tags = TagSerializer(many=True, read_only=True)
 
