@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.hashers import make_password
 
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
@@ -18,7 +19,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)  
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -37,14 +38,16 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     '''CustomUser Model which will be inherited by other users types'''
     email = models.EmailField(unique=True)
-    about = models.TextField()
+    about = models.TextField(blank=True)
     phonenumber = PhoneNumberField(blank=False)
     country = CountryField()
     birth_date = models.DateField(blank=True, null=True)
     last_login = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'about', 'phonenumber', 'password']
+    REQUIRED_FIELDS = ['username', 'about', 'phonenumber']
+
+    objects = CustomUserManager()
 
 
     # Add unique related_name attributes to avoid clashes
