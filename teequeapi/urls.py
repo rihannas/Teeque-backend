@@ -6,6 +6,7 @@ from .views import *
 router = DefaultRouter()
 router.register(r'services', ServiceViewSet, basename='services')
 router.register(r'sellers', SellerViewSet, basename='sellers')
+router.register(r'buyers', BuyerViewSet, basename='buyers')
 
 
 # Nested routers
