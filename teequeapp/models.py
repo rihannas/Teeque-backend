@@ -163,5 +163,5 @@ class Rating(models.Model):
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"Rating for {self.service.title} by {self.buyer.username}"
+        return f"Rating for {self.service.title} by {self.buyer.user.username}"
 
