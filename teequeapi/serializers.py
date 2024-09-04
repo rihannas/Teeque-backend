@@ -12,6 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['name']
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -24,10 +25,25 @@ class SellerSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
 
 
+class BuyerSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = Buyer
+        fields = ['id', 'user', 'favorite_services']
+
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = '__all__'
+
+
+
 class ServiceSerializer(serializers.ModelSerializer):
     taxedPrice = serializers.SerializerMethodField(method_name='price_w_tax')
-    category_id = serializers.StringRelatedField()
-    seller_id = serializers.HyperlinkedRelatedField(
+    category = serializers.StringRelatedField()
+    seller = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
         view_name='sellers-detail',
@@ -37,12 +53,9 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     def price_w_tax(self, service: Service):
         return (service.price * Decimal(0.15)) + service.price
+    
 
     class Meta:
         model = Service
         exclude = ['created_at', 'updated_at']
 
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rating
-        fields = '__all__'
