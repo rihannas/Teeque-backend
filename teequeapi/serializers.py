@@ -41,3 +41,8 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         exclude = ['created_at', 'updated_at']
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = '__all__'
