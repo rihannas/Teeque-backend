@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
+
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
@@ -28,14 +29,15 @@ class BuyerSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = Buyer
-        fields = ['id', 'favorite_services']
+        fields = ['id', 'favorite_services', 'user']
 
 
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
-        fields = '__all__'
+        fields = ['created_at', 'buyer', 'rating', 'comment']
+
 
 
 
