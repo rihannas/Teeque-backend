@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import ProtectedError
 
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -25,21 +26,20 @@ class ServiceViewSet(ModelViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['price'] #there should be ordering by ratings too
 
-    # def delete(self, request, pk):
-    #     try:
-    #         service = get_object_or_404(Service, pk=pk)
-    #         if service.orderitems.exists():
-    #             return Response(
-    #                 {'error': 'Service cannot be deleted because it is associated with an order item.'},
-    #                 status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #         service.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
-    #     except Exception as e:
-    #         return Response(
-    #             {'error': 'An unexpected error occurred.', 'detail': str(e)},
-    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #         )
+    def delete(self, request, pk):
+        service = get_object_or_404(Service, pk=pk)
+        try:
+            service.delete()
+            if service.orderitems.count() > 0:
+                return Response({'success': 'Service is deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+        except ProtectedError:
+                return Response({'error': 'Service cannot be deleted because it is associated with an order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class RatingViewSet(ModelViewSet):
+    pass
+
 
 
 class SellerViewSet(ModelViewSet):
