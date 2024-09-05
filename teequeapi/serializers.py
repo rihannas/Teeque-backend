@@ -19,17 +19,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 class SellerSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
     class Meta:
         model = Seller
-        fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
+        fields = ['id', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
 
 
 class BuyerSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = Buyer
-        fields = ['id', 'user', 'favorite_services']
+        fields = ['id', 'favorite_services']
 
 
 
