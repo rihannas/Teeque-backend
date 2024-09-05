@@ -38,7 +38,10 @@ class ServiceViewSet(ModelViewSet):
 
 
 class RatingViewSet(ModelViewSet):
-    pass
+    serializer_class = RatingSerializer
+    def get_queryset(self):
+        service_id = self.kwargs.get('service_pk')
+        return Rating.objects.filter(service_id=service_id)
 
 
 
