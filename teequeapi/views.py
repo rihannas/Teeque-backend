@@ -48,7 +48,6 @@ class RatingViewSet(ModelViewSet):
 class SellerViewSet(ModelViewSet):
     queryset = Seller.objects.select_related('user').all()
     serializer_class = SellerSerializer
-
     lookup_field = 'pk'
 
 
@@ -67,8 +66,10 @@ class BuyerViewSet(ModelViewSet):
         if request.method == 'GET':
             serializer = BuyerSerializer(buyer)
             return Response(serializer.data)
-        elif request.method == 'PUT':
-            serializer = BuyerSerializer(buyer, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+        # elif request.method == 'PUT':
+        #     serializer = BuyerSerializer(buyer, data=request.data)
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save()
+        #     return Response(serializer.data)
+
+
