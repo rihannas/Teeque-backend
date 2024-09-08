@@ -54,8 +54,8 @@ class SellerViewSet(ModelViewSet):
     def me(self, request):
         (seller, created) = Seller.objects.get_or_create(user_id=request.user.id)
         if request.method == 'GET':
-            serializer = SellerSerializer
-            return Response(serializer)
+            serializer = SellerSerializer(seller)
+            return Response(serializer.data)
         
         # TODO: implement this
         # elif request.method == 'PUT':
