@@ -50,6 +50,19 @@ class SellerViewSet(ModelViewSet):
     serializer_class = SellerSerializer
     lookup_field = 'pk'
 
+    @action(detail=False, methods=['GET', 'POST'])
+    def me(self, request):
+        (seller, created) = Seller.objects.get_or_create(user_id=request.user.id)
+        if request.method == 'GET':
+            serializer = SellerSerializer
+            return Response(serializer)
+        
+        # TODO: implement this
+        # elif request.method == 'PUT':
+        #     serializer = SellerSerializer(seller)
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save()
+        #     return Response(serializer.data)
 
 class BuyerViewSet(ModelViewSet):
     queryset = Buyer.objects.all()
@@ -66,6 +79,8 @@ class BuyerViewSet(ModelViewSet):
         if request.method == 'GET':
             serializer = BuyerSerializer(buyer)
             return Response(serializer.data)
+        
+        # TODO: implement this
         # elif request.method == 'PUT':
         #     serializer = BuyerSerializer(buyer, data=request.data)
         #     serializer.is_valid(raise_exception=True)
