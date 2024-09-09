@@ -99,22 +99,6 @@ class TestSellerModel(TestCase):
         seller_group = Group.objects.get(name='Seller') 
         self.assertEqual(self.seller.user.groups.get(name='Seller'), seller_group)
 
-class TestSellerModel(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        user = CustomUser.objects.create_user(email='sun@email.com', username='sun', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
-        seller = Seller(user=user)
-        seller.save()       
-    def setUp(self):
-        self.seller = Seller.objects.get(pk=1)
-    
-    def test_str_method(self):
-        self.assertEqual(self.seller.__str__(), 'sun')
-
-    def test_seller_is_saved_to_seller_group(self):
-        seller_group = Group.objects.get(name='Seller') 
-        self.assertEqual(self.seller.user.groups.get(name='Seller'), seller_group)
-
 class TestBuyerModel(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -170,3 +154,5 @@ class TestOrderModel(TestCase):
     
     def test_str_method(self):
         self.assertEqual(self.order.__str__(),  f"List Order #1 of {self.buyer.user.username}")
+
+
