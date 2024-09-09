@@ -8,9 +8,12 @@ class TestCustomUserModel(TestCase):
     @classmethod
     def setUpTestData(cls):
         user = CustomUser.objects.create_user(email='sun@email.com', username='sun', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
-        
+        superuser = CustomUser.objects.create_superuser(email='admin@email.com', username='admin', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+
     def setUp(self):
         self.user = CustomUser.objects.get(pk=1)
+        self.superuser = CustomUser.objects.get(username='admin')
+
 
     def test_user_created(self):
         self.assertEqual(self.user.id, 1)
@@ -57,8 +60,9 @@ class TestCustomUserModel(TestCase):
 
     # Tests that last_login is automatically set
 
-
-
+    # super user tests
+    def test_create_superusr(self):
+        self.assertEqual(self.superuser.username, 'admin')
 
         
     # TODO: FIX THIS BECAUSE This is returning the wrong message
