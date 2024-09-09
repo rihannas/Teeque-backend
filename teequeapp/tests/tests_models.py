@@ -130,3 +130,13 @@ class TestBuyerModel(TestCase):
     def test_buyer_is_saved_to_buyer_group(self):
         buyer_group = Group.objects.get(name='Buyer') 
         self.assertEqual(self.buyer.user.groups.get(name='Buyer'), buyer_group)
+
+class TestBuyerModel(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        category = Category.objects.create(name='writing')     
+    def setUp(self):
+        self.category = Category.objects.get(pk=1)
+    
+    def test_str_method(self):
+        self.assertEqual(self.category.__str__(), 'writing')
