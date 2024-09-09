@@ -156,3 +156,12 @@ class TestOrderModel(TestCase):
         self.assertEqual(self.order.__str__(),  f"List Order #1 of {self.buyer.user.username}")
 
 
+class TestTagModel(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        tag = Tag.objects.create(tag='webdev')     
+    def setUp(self):
+        self.tag = Tag.objects.get(pk=1)
+    
+    def test_str_method(self):
+        self.assertEqual(self.tag.__str__(), 'webdev')
