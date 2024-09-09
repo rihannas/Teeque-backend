@@ -156,6 +156,40 @@ class TestOrderModel(TestCase):
         self.assertEqual(self.order.__str__(),  f"List Order #1 of {self.buyer.user.username}")
 
 
+class TestOrderItemModel(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = CustomUser.objects.create_user(email='sun@email.com', username='sun', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+        buyer = Buyer(user=user)
+        buyer.save()
+
+        user = CustomUser.objects.create_user(email='moon@email.com', username='moon', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+        seller = Seller(user=user)
+        seller.save()  
+
+        category = Category.objects.create(name='writing')   
+
+        service = Service.objects.create(
+            title='Sample Service',
+            category=category,
+            description='This is a sample service description.',
+            price=Decimal('99.99'),
+            seller=seller
+        )
+
+        order = Order.objects.create(buyer=buyer)
+
+        orderItem = OrderItem.objects.create(service=service, order=order)
+
+    def setUp(self):
+        self.orderItem = OrderItem.objects.get(pk=1)
+        self.service = Service.objects.get(pk=1)
+    
+    def test_str_method(self):
+        self.assertEqual(self.orderItem.__str__(),  f"{self.service}")
+
+
+
 class TestTagModel(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -196,3 +230,4 @@ class TesRatingModel(TestCase):
     
     def test_str_method(self):
         self.assertEqual(self.rating.__str__(),  f"Rating for {self.service.title} by {self.buyer.user.username}" )
+
