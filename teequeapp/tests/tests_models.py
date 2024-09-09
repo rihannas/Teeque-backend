@@ -29,6 +29,8 @@ class TestCustomUserModel(TestCase):
         with self.assertRaises(ValueError): 
             user2 = CustomUser.objects.create_user(email='sun@email.com', username='moon', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
     
+    # test every value is correct
+    
     # test the phone number doesn't exist
     # test the phone number wrong
 
@@ -93,23 +95,7 @@ class TestSellerModel(TestCase):
         self.seller = Seller.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.seller.__str__(), 'sun')
-
-    def test_seller_is_saved_to_seller_group(self):
-        seller_group = Group.objects.get(name='Seller') 
-        self.assertEqual(self.seller.user.groups.get(name='Seller'), seller_group)
-
-class TestSellerModel(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        user = CustomUser.objects.create_user(email='sun@email.com', username='sun', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
-        seller = Seller(user=user)
-        seller.save()       
-    def setUp(self):
-        self.seller = Seller.objects.get(pk=1)
-    
-    def test_str_method(self):
-        self.assertEqual(self.seller.__str__(), 'sun')
+        self.assertEqual(str(self.seller), 'sun')
 
     def test_seller_is_saved_to_seller_group(self):
         seller_group = Group.objects.get(name='Seller') 
@@ -125,7 +111,7 @@ class TestBuyerModel(TestCase):
         self.buyer = Buyer.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.buyer.__str__(), 'sun')
+        self.assertEqual(str(self.buyer), 'sun')
 
     def test_buyer_is_saved_to_buyer_group(self):
         buyer_group = Group.objects.get(name='Buyer') 
@@ -139,7 +125,7 @@ class TestCategoryModel(TestCase):
         self.category = Category.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.category.__str__(), 'writing')
+        self.assertEqual(str(self.category), 'writing')
 
 class TestOrderModel(TestCase):
     @classmethod
@@ -169,7 +155,7 @@ class TestOrderModel(TestCase):
         self.buyer = Buyer.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.order.__str__(),  f"List Order #1 of {self.buyer.user.username}")
+        self.assertEqual(str(self.order),  f"List Order #1 of {self.buyer.user.username}")
 
 
 class TestOrderItemModel(TestCase):
@@ -202,7 +188,7 @@ class TestOrderItemModel(TestCase):
         self.service = Service.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.orderItem.__str__(),  f"{self.service}")
+        self.assertEqual(str(self.orderItem),  f"{self.service}")
 
 
 
@@ -214,7 +200,7 @@ class TestTagModel(TestCase):
         self.tag = Tag.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.tag.__str__(), 'webdev')
+        self.assertEqual(str(self.tag), 'webdev')
 
 class TesRatingModel(TestCase):
     @classmethod
@@ -245,5 +231,5 @@ class TesRatingModel(TestCase):
         self.rating = Rating.objects.get(pk=1)
     
     def test_str_method(self):
-        self.assertEqual(self.rating.__str__(),  f"Rating for {self.service.title} by {self.buyer.user.username}" )
+        self.assertEqual(str(self.rating),  f"Rating for {self.service.title} by {self.buyer.user.username}")
 
