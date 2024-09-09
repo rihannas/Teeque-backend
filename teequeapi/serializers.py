@@ -57,7 +57,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     seller = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
-        view_name='sellers-detail',
+        view_name='teequeapi:sellers-detail',
         lookup_field='pk'
     )
     tags = TagSerializer(many=True, read_only=True)
