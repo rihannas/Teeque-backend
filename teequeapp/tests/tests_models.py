@@ -61,8 +61,20 @@ class TestCustomUserModel(TestCase):
     # Tests that last_login is automatically set
 
     # super user tests
-    def test_create_superusr(self):
+    def test_create_superuser(self):
         self.assertEqual(self.superuser.username, 'admin')
+
+    def test_superuser_extrafields(self):
+        self.assertTrue(self.superuser.is_staff)
+        self.assertTrue(self.superuser.is_superuser)
+
+    def test_raise_value_error_is_staff(self):
+        with self.assertRaises(ValueError):
+            superuser2 = CustomUser.objects.create_superuser(email='admin@email.com', username='admin', password='ilovedjango', about='ilovesun', phonenumber='+12345678900', is_staff=False)
+
+    def test_raise_value_error_is_superuse(self):
+        with self.assertRaises(ValueError):
+            superuser2 = CustomUser.objects.create_superuser(email='admin@email.com', username='admin', password='ilovedjango', about='ilovesun', phonenumber='+12345678900', is_superuser=False)
 
         
     # TODO: FIX THIS BECAUSE This is returning the wrong message
