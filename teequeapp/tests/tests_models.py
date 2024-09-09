@@ -131,7 +131,7 @@ class TestBuyerModel(TestCase):
         buyer_group = Group.objects.get(name='Buyer') 
         self.assertEqual(self.buyer.user.groups.get(name='Buyer'), buyer_group)
 
-class TestBuyerModel(TestCase):
+class TestCategoryModel(TestCase):
     @classmethod
     def setUpTestData(cls):
         category = Category.objects.create(name='writing')     
