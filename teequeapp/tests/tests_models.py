@@ -140,3 +140,33 @@ class TestCategoryModel(TestCase):
     
     def test_str_method(self):
         self.assertEqual(self.category.__str__(), 'writing')
+
+class TestOrderModel(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = CustomUser.objects.create_user(email='sun@email.com', username='sun', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+        buyer = Buyer(user=user)
+        buyer.save()
+
+        user = CustomUser.objects.create_user(email='moon@email.com', username='moon', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+        seller = Seller(user=user)
+        seller.save()  
+
+        category = Category.objects.create(name='writing')   
+
+        service = Service.objects.create(
+            title='Sample Service',
+            category=category,
+            description='This is a sample service description.',
+            price=Decimal('99.99'),
+            seller=seller
+        )
+
+        order = Order.objects.create(buyer=buyer)   
+
+    def setUp(self):
+        self.order = Order.objects.get(pk=1)
+        self.buyer = Buyer.objects.get(pk=1)
+    
+    def test_str_method(self):
+        self.assertEqual(self.order.__str__(),  f"List Order #1 of {self.buyer.user.username}")
