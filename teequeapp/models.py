@@ -131,7 +131,7 @@ class Order(models.Model):
     #TODO: 
     # Change the on_delete situation to be PROTECTED if an order is active.
     def __str__(self):
-        return f"Order #{self.id}"
+        return f"List Order #{self.id} of {self.buyer.user.username}"
 
 class OrderItem(models.Model):
     ORDER_STATUS_PENDING = 'P'
