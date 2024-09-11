@@ -5,24 +5,25 @@ from teequeapp.models import *
 
 class ServiceViewSetTests(APITestCase):
 
-    def test_view_services(self):
-        url = reverse('teequeapi:services-list')
-        reponse = self.client.get(url, format='json')
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(email='moon@email.com', username='moon', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+        self.seller = Seller(user=self.user)
+        self.seller.save()  
 
-        user = CustomUser.objects.create_user(email='moon@email.com', username='moon', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
-        seller = Seller(user=user)
-        seller.save()  
+        self.category = Category.objects.create(name='writing')   
 
-        category = Category.objects.create(name='writing')   
-
-        service = Service.objects.create(
+        self.service = Service.objects.create(
             title='Sample Service',
-            category=category,
+            category=self.category,
             description='This is a sample service description.',
             price=Decimal('99.99'),
-            seller=seller
+            seller=self.seller
         )
 
 
-        self.assertEqual(reponse.status_code, status.HTTP_200_OK)
-        self.assertEqual(Seller.objects.count(), 1)
+    def test_view_services(self):
+        url = reverse('teequeapi:services-list')
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
