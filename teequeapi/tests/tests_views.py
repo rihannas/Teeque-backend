@@ -33,3 +33,40 @@ class ServiceViewSetTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'Sample Service')
+
+    # add test for posting, putting and deleting
+
+
+
+class SellerViewSetTests(APITestCase):
+
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(email='moon@email.com', username='moon', password='ilovedjango', about='ilovesun', phonenumber='+12345678900')
+        self.seller = Seller(user=self.user)
+        self.seller.save()  
+
+        self.category = Category.objects.create(name='writing')   
+
+        self.service = Service.objects.create(
+            title='Sample Service',
+            category=self.category,
+            description='This is a sample service description.',
+            price=Decimal('99.99'),
+            seller=self.seller
+        )
+
+
+    def test_view_services(self):
+        url = reverse('teequeapi:sellers-list')
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['id'], 1)
+
+    def test_retrieve_service(self):
+        url = reverse('teequeapi:sellers-detail', kwargs={'pk': self.seller.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], 1)
+
+    # add test for posting, putting and deleting
