@@ -27,3 +27,9 @@ class ServiceViewSetTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    def test_retrieve_service(self):
+        url = reverse('teequeapi:services-detail', kwargs={'pk': self.service.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Sample Service')
