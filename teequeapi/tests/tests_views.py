@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from teequeapp.models import *
 
-class ServiceTests(APITestCase):
+class ServiceViewSetTests(APITestCase):
 
     def test_view_services(self):
         url = reverse('teequeapi:services-list')
