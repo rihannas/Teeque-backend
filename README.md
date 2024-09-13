@@ -38,3 +38,36 @@ This table provides a clear overview of the models, fields, and their relationsh
 
 - `django_countries`: For handling country fields.
 - `phonenumber_field`: For handling phone numbers.
+
+Sure! Here's an example of a basic README file content that you can include for your Django REST Framework project:
+
+---
+
+## Teequeapi/urls.py
+
+## API Endpoints
+
+### Services
+
+- `/api/services/`: List and create services.
+- `/api/services/{id}/`: Retrieve, update, or delete a service by ID.
+
+#### Reviews
+
+- `/api/services/{service_id}/reviews/`: List and create reviews for a specific service.
+- `/api/services/{service_id}/reviews/{id}/`: Retrieve, update, or delete a review by ID for a specific service.
+
+### Sellers
+
+- `/api/sellers/`: List and create sellers.
+- `/api/sellers/{id}/`: Retrieve, update, or delete a seller by ID.
+
+#### Seller Services
+
+- `/api/sellers/{seller_id}/services/`: List services provided by a specific seller.
+- `/api/sellers/{seller_id}/services/{id}/`: Retrieve, update, or delete a service provided by a specific seller.
+
+### Buyers
+
+- `/api/buyers/`: List and create buyers.
+- `/api/buyers/{id}/`: Retrieve, update, or delete a buyer by ID.
