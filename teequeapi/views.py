@@ -26,15 +26,11 @@ class ServiceViewSet(ModelViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['price'] #there should be ordering by ratings too
 
-    def delete(self, request, pk):
-        service = get_object_or_404(Service, pk=pk)
-        try:
-            service.delete()
-            if service.orderitems.count() > 0:
-                return Response({'success': 'Service is deleted'}, status=status.HTTP_204_NO_CONTENT)
+    def destroy(self, request, *args, **kwargs):
+        if OrderItem.objects.filter(service_id=kwargs['pk']).exclude(order_status=OrderItem.ORDER_STATUS_COMPLETE).count() > 0:
+            return Response({'error': 'Service cannot be deleted because it is associated as an active order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        except ProtectedError:
-                return Response({'error': 'Service cannot be deleted because it is associated with an order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().destroy(request, *args, **kwargs)
 
 
 class RatingViewSet(ModelViewSet):
@@ -49,6 +45,8 @@ class SellerViewSet(ModelViewSet):
     queryset = Seller.objects.select_related('user').all()
     serializer_class = SellerSerializer
     lookup_field = 'pk'
+
+    # make sure this url is accessed if user is a seller object or else anyone can create a seller object since we are using get_or_create method
 
     @action(detail=False, methods=['GET', 'POST'])
     def me(self, request):
@@ -71,6 +69,8 @@ class BuyerViewSet(ModelViewSet):
     @action(detail=True)
     def history(self, request, pk):
         return Response('ok')
+
+    # make sure this url is accessed if user is a buyer object or else anyone can create a buyer object since we are using get_or_create method
 
     @action(detail=False, methods=['GET', 'PUT'])
     def me(self, request):
