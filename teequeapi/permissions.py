@@ -20,7 +20,7 @@ class IsServiceSellerOrReadOnly(permissions.BasePermission):
             return True
 
         # Instance must have an attribute named `owner`.
-        return obj.seller == request.user
+        return obj.seller.user == request.user
     
 class EditProfilePermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
