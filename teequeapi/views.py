@@ -2,8 +2,10 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import ProtectedError
 
+from rest_framework.permissions import AllowAny, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.decorators import action, permission_classes
@@ -25,8 +27,18 @@ class ServiceViewSet(ModelViewSet):
     filterset_class = ServiceFilter
     search_fields = ['title', 'description']
     ordering_fields = ['price'] #there should be ordering by ratings too
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+        
+    def perform_create(self, serializer):
+        user = self.request.user
+        seller = Seller.objects.get(user=user)
+        serializer.save(seller=seller)
 
     def destroy(self, request, *args, **kwargs):
+        # needs more working
         if OrderItem.objects.filter(service_id=kwargs['pk']).exclude(order_status=OrderItem.ORDER_STATUS_COMPLETE).count() > 0:
             return Response({'error': 'Service cannot be deleted because it is associated as an active order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -41,11 +53,14 @@ class RatingViewSet(ModelViewSet):
 
 
 
-class SellerViewSet(ModelViewSet):
+class SellerViewSet(CreateModelMixin,
+                  RetrieveModelMixin,
+                  DestroyModelMixin,
+                  GenericViewSet):
     queryset = Seller.objects.select_related('user').all()
     serializer_class = SellerSerializer
     lookup_field = 'pk'
-
+    permission_classes=[IsAuthenticated]
     # make sure this url is accessed if user is a seller object or else anyone can create a seller object since we are using get_or_create method
 
     @action(detail=False, methods=['GET', 'POST'])
@@ -62,9 +77,13 @@ class SellerViewSet(ModelViewSet):
         #     serializer.save()
         #     return Response(serializer.data)
 
-class BuyerViewSet(ModelViewSet):
+class BuyerViewSet(CreateModelMixin,
+                  RetrieveModelMixin,
+                  DestroyModelMixin,
+                  GenericViewSet):
     queryset = Buyer.objects.all()
     serializer_class = BuyerSerializer
+    permission_classes=[IsAuthenticated]
 
     @action(detail=True)
     def history(self, request, pk):
@@ -86,5 +105,4 @@ class BuyerViewSet(ModelViewSet):
         #     serializer.is_valid(raise_exception=True)
         #     serializer.save()
         #     return Response(serializer.data)
-
 
