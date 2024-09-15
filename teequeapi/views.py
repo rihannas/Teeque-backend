@@ -14,6 +14,7 @@ from rest_framework.decorators import action, permission_classes
 from teequeapp.models import *
 from .serializers import *
 from .filters import *
+from .permissions import IsServiceSellerOrReadOnly
 
 
 # Create your views here.
@@ -27,7 +28,7 @@ class ServiceViewSet(ModelViewSet):
     filterset_class = ServiceFilter
     search_fields = ['title', 'description']
     ordering_fields = ['price'] #there should be ordering by ratings too
-    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly, IsServiceSellerOrReadOnly]
 
     def get_serializer_context(self):
         return {'request': self.request}
