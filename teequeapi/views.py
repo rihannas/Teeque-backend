@@ -29,9 +29,6 @@ class ServiceViewSet(ModelViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['price'] #there should be ordering by ratings too
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly, IsServiceSellerOrReadOnly]
-
-    def get_serializer_context(self):
-        return {'request': self.request}
         
     def perform_create(self, serializer):
         user = self.request.user
@@ -85,6 +82,9 @@ class BuyerViewSet(CreateModelMixin,
     queryset = Buyer.objects.all()
     serializer_class = BuyerSerializer
     permission_classes=[IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
     @action(detail=True)
     def history(self, request, pk):
