@@ -25,17 +25,34 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 
 class SellerSerializer(serializers.ModelSerializer):
+    average_rating = serializers.ReadOnlyField()
+    number_of_reviews = serializers.ReadOnlyField()
     class Meta:
         model = Seller
-        fields = ['id', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
+        fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
 
 
 class BuyerSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    about = serializers.CharField(source='user.about', required=False)
+    
     class Meta:
         model = Buyer
-        fields = ['id', 'favorite_services', 'user']
+        fields = ['id', 'user', 'about']
 
+    def create(self, validated_data):
+            requester_user = self.context['request'].user
+            user_data = validated_data.pop('user', {})
+            about = user_data.get('about', '')
+
+            if about:
+                requester_user.about = about
+                requester_user.save()
+
+            buyer = Buyer.objects.create(user=requester_user)
+            return buyer
+        
+
+    
 class BuyerRatingSerializer(serializers.ModelSerializer):
     user = SimpleUserSerializer(read_only=True)
     
@@ -53,7 +70,7 @@ class RatingSerializer(serializers.ModelSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     taxedPrice = serializers.SerializerMethodField(method_name='price_w_tax')
-    category = serializers.StringRelatedField()
+    # category = serializers.StringRelatedField()
     seller = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
@@ -69,4 +86,3 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         exclude = ['created_at', 'updated_at']
-
