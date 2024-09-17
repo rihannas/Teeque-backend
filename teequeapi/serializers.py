@@ -30,6 +30,7 @@ class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
         fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
+    
 
 
 class BuyerSerializer(serializers.ModelSerializer):
@@ -37,19 +38,33 @@ class BuyerSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Buyer
-        fields = ['id', 'user', 'about']
+        fields = ['id', 'about']
 
     def create(self, validated_data):
-            requester_user = self.context['request'].user
-            user_data = validated_data.pop('user', {})
-            about = user_data.get('about', '')
+        requester_user = self.context['request'].user
+        about = validated_data.pop('about', None)
 
-            if about:
-                requester_user.about = about
-                requester_user.save()
+        if about:
+            requester_user.about = about
+            requester_user.save()
 
-            buyer = Buyer.objects.create(user=requester_user)
-            return buyer
+        buyer, created = Buyer.objects.get_or_create(user=requester_user)
+
+        if created:
+        # Buyer instance already exists, so we can update or return it
+            return buyer.save()
+    
+    # If created, return the newly created buyer
+        return buyer
+    
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        about = user_data.get('about')
+        if about:
+            instance.user.about = about
+            instance.user.save()
+        return super().update(instance, validated_data)
+
         
 
     
