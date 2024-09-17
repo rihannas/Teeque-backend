@@ -59,7 +59,10 @@ class SellerViewSet(CreateModelMixin,
     serializer_class = SellerSerializer
     lookup_field = 'pk'
     permission_classes=[IsAuthenticated]
-    # make sure this url is accessed if user is a seller object or else anyone can create a seller object since we are using get_or_create method
+    #TODO: make sure this url is accessed if user is a seller object or else anyone can create a seller object since we are using get_or_create method
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
     @action(detail=False, methods=['GET', 'POST'])
     def me(self, request):
@@ -79,7 +82,7 @@ class BuyerViewSet(CreateModelMixin,
                   RetrieveModelMixin,
                   DestroyModelMixin,
                   GenericViewSet):
-    queryset = Buyer.objects.all()
+    queryset = Buyer.objects.select_related('user').prefetch_related('favorite_services').all()
     serializer_class = BuyerSerializer
     permission_classes=[IsAuthenticated]
 
@@ -101,9 +104,9 @@ class BuyerViewSet(CreateModelMixin,
             return Response(serializer.data)
         
         # TODO: implement this
-        # elif request.method == 'PUT':
-        #     serializer = BuyerSerializer(buyer, data=request.data)
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save()
-        #     return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = BuyerSerializer(buyer, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
