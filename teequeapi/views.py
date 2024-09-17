@@ -64,19 +64,18 @@ class SellerViewSet(CreateModelMixin,
     def get_serializer_context(self):
         return {'request': self.request}
 
-    @action(detail=False, methods=['GET', 'POST'])
+    @action(detail=False, methods=['GET', 'PUT'])
     def me(self, request):
         (seller, created) = Seller.objects.get_or_create(user_id=request.user.id)
         if request.method == 'GET':
             serializer = SellerSerializer(seller)
             return Response(serializer.data)
         
-        # TODO: implement this
-        # elif request.method == 'PUT':
-        #     serializer = SellerSerializer(seller)
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save()
-        #     return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = SellerSerializer(seller, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
 class BuyerViewSet(CreateModelMixin,
                   RetrieveModelMixin,
@@ -103,7 +102,6 @@ class BuyerViewSet(CreateModelMixin,
             serializer = BuyerSerializer(buyer)
             return Response(serializer.data)
         
-        # TODO: implement this
         elif request.method == 'PUT':
             serializer = BuyerSerializer(buyer, data=request.data)
             serializer.is_valid(raise_exception=True)

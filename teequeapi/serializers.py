@@ -27,11 +27,37 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 class SellerSerializer(serializers.ModelSerializer):
     average_rating = serializers.ReadOnlyField()
     number_of_reviews = serializers.ReadOnlyField()
+    about = serializers.CharField(source='user.about', required=False)
+
     class Meta:
         model = Seller
-        fields = ['id', 'user', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
+        fields = ['id', 'about', 'skills', 'portfolio', 'average_rating', 'number_of_reviews']
     
+    def create(self, validated_data):
+        requester_user = self.context['request'].user
+        about = validated_data.pop('about', None)
+        user = validated_data.pop('user', None)
 
+        if about:
+            requester_user.about = about
+            requester_user.save()
+
+        seller, created = Seller.objects.get_or_create(user=requester_user, **validated_data)
+
+        if created:
+        # seller instance already exists, so we can update or return it
+            return seller.save()
+    
+        # If created, return the newly created seller
+        return seller
+    
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        about = user_data.get('about')
+        if about:
+            instance.user.about = about
+            instance.user.save()
+        return super().update(instance, validated_data)
 
 class BuyerSerializer(serializers.ModelSerializer):
     about = serializers.CharField(source='user.about', required=False)
