@@ -84,6 +84,7 @@ class BuyerSerializer(serializers.ModelSerializer):
         return buyer
     
     def update(self, instance, validated_data):
+        """"""
         user_data = validated_data.pop('user', {})
         about = user_data.get('about')
         if about:
@@ -108,10 +109,17 @@ class RatingSerializer(serializers.ModelSerializer):
         fields = ['created_at', 'buyer', 'rating', 'comment']
 
 
+class ServiceSellerSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = Seller
+        fields = ['username', 'average_rating']
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     taxedPrice = serializers.SerializerMethodField(method_name='price_w_tax')
-    # category = serializers.StringRelatedField()
+    seller_info = ServiceSellerSerializer(source='seller', read_only=True)
     seller = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
