@@ -10,6 +10,11 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.decorators import action, permission_classes
 
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+
+import os
 
 from teequeapp.models import *
 from .serializers import *
@@ -18,11 +23,19 @@ from .permissions import IsServiceSellerOrReadOnly
 
 
 # Create your views here.
+
+
+
+class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = os.getenv('CALLBACK_URL_YOU_SET_ON_GOOGLE')
+    client_class = OAuth2Client
+
 class ServiceViewSet(ModelViewSet):
     """
     A simple ViewSet for viewing and editing accounts.
     """
-    queryset = Service.objects.select_related('category', 'seller').prefetch_related('tags').all()
+    queryset = Service.objects.select_related('category', 'seller__user', 'seller').prefetch_related('tags').all()
     serializer_class = ServiceSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ServiceFilter

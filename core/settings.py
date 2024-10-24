@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,15 +43,19 @@ INSTALLED_APPS = [
     'teequeapp',
     'teequeapi',
     'rest_framework',
+    'rest_framework.authtoken',
     'djoser',
     'phonenumber_field',
     'django_countries',
     'django_filters',
+    'django.contrib.sites',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
+    
 
 ]
 
@@ -151,6 +156,7 @@ AUTH_USER_MODEL = 'teequeapp.CustomUser'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
         'rest_framework.authentication.SessionAuthentication'
     )
 }
@@ -159,10 +165,12 @@ SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
-DJOSER = {
-  'SERIALIZERS': {
-    'user_create': 'core.serializers.UserCreateSerializer',
-  }
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'my-app-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'my-refresh-token',
+    'TOKEN_MODEL': None,  # Disabling token key authentication
+
 }
 
 INTERNAL_IPS = [
@@ -175,3 +183,24 @@ CORS_ALLOWED_ORIGINS = [
 
 ]
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Config for django allAuth 
+ACCOUNT_EMAIL_REQUIRED= True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_CHANGE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+ACCOUNT_SIGNUP_REDIRECT_URL = '/auth/users/'
+
+SOCIALACCOUNT_PROVIDERS = {
+  'google': {
+      'EMAIL_AUTHENTICATION': True,
+      'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        }
+  }
+}
+
+SITE_ID = 1
