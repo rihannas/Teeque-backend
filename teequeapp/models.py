@@ -169,3 +169,8 @@ class Rating(models.Model):
     def __str__(self):
         return f"Rating for {self.service.title} by {self.buyer.user.username}"
 
+class RegistrationProgress(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='registration_progress')
+    registration_complete = models.BooleanField(default=True)  # Set to True after initial registration
+    profile_complete = models.BooleanField(default=False)      # Set to True after profile details
+    type_selection_complete = models.BooleanField(default=False)  # Set to True after seller/buyer selection
