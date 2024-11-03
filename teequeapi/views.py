@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import ProtectedError
+from django.db import transaction
 
 from rest_framework.permissions import AllowAny, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework import status
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin 
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -20,16 +21,92 @@ from teequeapp.models import *
 from .serializers import *
 from .filters import *
 from .permissions import IsServiceSellerOrReadOnly
+from .signals import *
 
 
 # Create your views here.
-
-
 
 class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
     callback_url = os.getenv('CALLBACK_URL_YOU_SET_ON_GOOGLE')
     client_class = OAuth2Client
+
+
+class RegistrationProgressViewSet(GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RegistrationProgressSerializer
+    
+    def list(self, request):
+        """Get registration progress"""
+        progress = request.user.registration_progress
+        serializer = self.get_serializer(progress)
+        return Response(serializer.data)
+
+class ProfileViewSet(GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+    
+    @transaction.atomic
+    def create(self, request):
+        """Complete user profile"""
+        user = request.user
+        serializer = self.get_serializer(user, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            
+            # Update progress
+            progress = user.registration_progress
+            progress.profile_complete = True
+            progress.save()
+            
+            return Response({
+                'message': 'Profile details saved successfully',
+                'progress': RegistrationProgressSerializer(progress).data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserTypeViewSet(GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    
+    def get_serializer_class(self):
+        user_type = self.request.data.get('user_type')
+        return SellerSerializer if user_type == 'seller' else BuyerSerializer
+    
+    @transaction.atomic
+    def create(self, request):
+        """Select user type and create corresponding profile"""
+        user = request.user
+        user_type = request.data.get('user_type')
+        
+        if user_type not in ['seller', 'buyer']:
+            return Response(
+                {'error': 'Invalid user type. Must be either "seller" or "buyer"'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Determine model based on user type
+        model = Seller if user_type == 'seller' else Buyer
+        serializer = self.get_serializer(data=request.data.get('profile_data', {}))
+        
+        if serializer.is_valid():
+            instance = model.objects.create(user=user, **serializer.validated_data)
+            
+            # Update progress
+            progress = user.registration_progress
+            progress.type_selection_complete = True
+            progress.save()
+            
+            return Response({
+                'message': f'{user_type.title()} profile created successfully',
+                'progress': RegistrationProgressSerializer(progress).data,
+                'profile': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 class ServiceViewSet(ModelViewSet):
     """
