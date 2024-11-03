@@ -42,6 +42,8 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     '''CustomUser Model which will be inherited by other users types'''
     email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=65)
+    last_name = models.CharField(max_length=65)
     about = models.TextField(blank=True)
     phonenumber = PhoneNumberField(blank=False)
     country = CountryField()
