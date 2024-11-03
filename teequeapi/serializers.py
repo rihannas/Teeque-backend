@@ -1,6 +1,29 @@
+from django_countries.serializer_fields import CountryField
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from teequeapp.models import *
 from decimal import Decimal
+
+class RegistrationProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistrationProgress
+        fields = ['registration_complete', 'profile_complete', 'type_selection_complete']
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    country = CountryField()
+    phonenumber = PhoneNumberField()
+    registration_progress = RegistrationProgressSerializer(read_only=True)
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id', 'email', 'username', 'first_name', 'last_name','phonenumber', 
+            'country', 'birth_date', 'registration_progress'
+        ]
+        read_only_fields = ['email', 'username']
+
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,7 +137,7 @@ class ServiceSellerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seller
-        fields = ['username', 'average_rating']
+        fields = ['username', 'average_rating', 'id']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
