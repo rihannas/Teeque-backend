@@ -78,7 +78,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -178,11 +178,6 @@ INTERNAL_IPS = [
 ]
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-
-]
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Config for django allAuth 
 ACCOUNT_EMAIL_REQUIRED= True
@@ -190,7 +185,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_CHANGE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
-ACCOUNT_SIGNUP_REDIRECT_URL = '/auth/users/'
+ACCOUNT_SIGNUP_REDIRECT_URL = 'api/registration/progress'
 
 SOCIALACCOUNT_PROVIDERS = {
   'google': {
@@ -204,3 +199,11 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SITE_ID = 1
+
+
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True  # Important for CORS
+CORS_ORIGIN_WHITELIST = ['http://localhost:5173']
