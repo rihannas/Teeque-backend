@@ -16,6 +16,10 @@ djoser = "*"
 drf-nested-routers = "*"
 python-dotenv = "*"
 django-phonenumbers = "*"
+coverage = "*"
+django-cors-headers = "*"
+django-allauth = {extras = ["socialaccount"], version = "*"}
+dj-rest-auth = {extras = ["with_social"], version = "*"}
 
 [dev-packages]
 
